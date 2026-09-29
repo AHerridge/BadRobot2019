@@ -1,22 +1,24 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.robot.CANTalonSRX;
-import frc.robot.Robot;
+import frc.robot.utils.hardware.CANTalonSRX;
 import frc.robot.RobotMap;
 import frc.robot.commands.tele.TeleBackHatchCam;
 
-public class BackHatchCam extends Subsystem
+public class BackHatchCam extends BadSubsystem
 {
-    private final Robot robot;
-    private final CANTalonSRX motor;
+    private CANTalonSRX motor;
 
-    public BackHatchCam(Robot robot)
+    @Override
+    protected void initComponents()
     {
-        super();
-        this.robot = robot;
         motor = new CANTalonSRX(RobotMap.CAM_MOTOR);
         motor.setInverted(true);
+    }
+
+    @Override
+    protected void initDefaultCommand()
+    {
+        // setDefaultCommand(new TeleBackHatchCam());
     }
 
     public void rotate(double speed)
@@ -44,9 +46,8 @@ public class BackHatchCam extends Subsystem
         return motor.getSensorCollection().isFwdLimitSwitchClosed();
     }
 
-    @Override
-    protected void initDefaultCommand()
+    public static boolean isEnabled()
     {
-        setDefaultCommand(new TeleBackHatchCam(this, robot.oi.xboxController));
+        return true;
     }
 }

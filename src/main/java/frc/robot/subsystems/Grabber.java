@@ -1,45 +1,70 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.robot.CANTalonSRX;
-import frc.robot.Robot;
+import frc.robot.utils.hardware.CANTalonSRX;
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.robot.RobotMap;
+import frc.robot.Subsystems;
+import frc.robot.commands.SpinGrabberCW;
 
-public class Grabber extends Subsystem
+public class Grabber extends BadSubsystem
 {
-    private final Robot robot;
-    private CANTalonSRX grabberMotor;
+    private CANTalonSRX motor;
 
-    public Grabber(Robot robot)
+    @Override
+    protected void initComponents()
     {
-        super();
-        this.robot = robot;
-        grabberMotor = new CANTalonSRX(RobotMap.GRABBER_MOTOR);
+        motor = new CANTalonSRX(RobotMap.GRABBER_MOTOR);
     }
 
-    public void rotate(double speed)
+    // @Override
+    // protected void initDefaultCommand()
+    // {
+    //     setDefaultCommand(new CommandGroup()
+    //     {
+    //         {
+    //             addSequential(new WaitCommand(2));
+    //             addSequential(new SpinGrabberCW());
+    //             addSequential(new InstantCommand()
+    //             {
+    //                 {
+    //                     requires(Subsystems.getInstance().grabber);
+    //                 }
+
+    //                 @Override
+    //                 protected void execute()
+    //                 {
+    //                     Subsystems.getInstance().grabber.stopMotor();
+    //                 }
+    //             });
+    //         }
+
+    //     });
+    // }
+
+    public void spin(double speed)
     {
-        grabberMotor.set(speed);
+        motor.set(speed);
     }
 
-    public void rotateCW()
+    public void spinCW()
     {
-        grabberMotor.set(1);
+        motor.set(1);
     }
 
-    public void rotateCCW()
+    public void spinCCW()
     {
-        grabberMotor.set(-1);
+        motor.set(-1);
     }
 
     public void stopMotor()
     {
-        grabberMotor.stopMotor();
+        motor.stopMotor();
     }
 
-    @Override
-    protected void initDefaultCommand()
+    public static boolean isEnabled()
     {
-        // TODO setDefaultCommand(new TeleGrab(robot.backHatchCam, robot.oi.xboxController));
+        return true;
     }
 }

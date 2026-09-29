@@ -6,30 +6,24 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.tele.TeleDrive;
 
-public class DriveTrain extends Subsystem
+public class DriveTrain extends BadSubsystem
 {
-    private final Robot robot;
-    private final CANSparkMax frontLeftMotor;
-    private final CANSparkMax frontRightMotor;
-    private final CANSparkMax backLeftMotor;
-    private final CANSparkMax backRightMotor;
-    private final AHRS navx;
+    private CANSparkMax frontLeftMotor;
+    private CANSparkMax frontRightMotor;
+    private CANSparkMax backLeftMotor;
+    private CANSparkMax backRightMotor;
+    private DifferentialDrive differentialDrive;
+    private AHRS navx;
 
-    private final DifferentialDrive differentialDrive;
+    private boolean reversed = false;
 
-    private boolean reversed;
-
-    public DriveTrain(Robot robot)
+    @Override
+    protected void initComponents()
     {
-        super();
-
-        this.robot = robot;
         frontLeftMotor = new CANSparkMax(RobotMap.FRONT_LEFT_MOTOR, MotorType.kBrushless);
         frontRightMotor = new CANSparkMax(RobotMap.FRONT_RIGHT_MOTOR, MotorType.kBrushless);
         backLeftMotor = new CANSparkMax(RobotMap.BACK_LEFT_MOTOR, MotorType.kBrushless);
@@ -48,6 +42,12 @@ public class DriveTrain extends Subsystem
         backRightMotor.follow(frontRightMotor);
 
         differentialDrive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
+    }
+
+    @Override
+    protected void initDefaultCommand()
+    {
+        setDefaultCommand(new TeleDrive());
     }
 
     public void tankDrive(double leftSpeed, double rightSpeed)
@@ -83,22 +83,6 @@ public class DriveTrain extends Subsystem
         differentialDrive.stopMotor();
     }
 
-    @Override
-    public void close()
-    {
-        frontLeftMotor.close();
-        frontRightMotor.close();
-        backLeftMotor.close();
-        backRightMotor.close();
-        super.close();
-    }
-
-    @Override
-    protected void initDefaultCommand()
-    {
-        setDefaultCommand(new TeleDrive(this, robot.oi.xboxController));
-    }
-
     public boolean isReversed()
     {
         return reversed;
@@ -107,5 +91,22 @@ public class DriveTrain extends Subsystem
     public void toggleReversed()
     {
         reversed = !reversed;
+    }
+
+    @Override
+    public void close()
+    {
+        frontLeftMotor.close();
+        frontRightMotor.close();
+        backLeftMotor.close();
+        backRightMotor.close();
+        differentialDrive.close();
+        navx.close();
+        super.close();
+    }
+
+    public static boolean isEnabled()
+    {
+        return true;
     }
 }

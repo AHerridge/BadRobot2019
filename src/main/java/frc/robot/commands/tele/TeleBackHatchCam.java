@@ -2,28 +2,33 @@ package frc.robot.commands.tele;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.Controls;
+import frc.robot.Subsystems;
 import frc.robot.subsystems.BackHatchCam;
-import frc.robot.utils.CustomXboxController;
+import frc.robot.utils.hardware.CustomXboxController;
 
 public class TeleBackHatchCam extends Command
 {
-    protected final BackHatchCam backHatchCam;
-    protected final CustomXboxController xboxController;
+    protected BackHatchCam backHatchCam;
+    protected CustomXboxController xboxController;
 
-    public TeleBackHatchCam(BackHatchCam backHatchCam, CustomXboxController xboxController)
+    public TeleBackHatchCam()
     {
-        super(backHatchCam);
-        this.backHatchCam = backHatchCam;
-        this.xboxController = xboxController;
+        super(Subsystems.getInstance().backHatchCam);
+    }
+
+    @Override
+    protected void initialize()
+    {
+        this.backHatchCam = Subsystems.getInstance().backHatchCam;
+        this.xboxController = Controls.getInstance().mainController;
     }
 
     @Override
     protected void execute()
     {
         double rightTrigger = xboxController.getTriggerAxis(Hand.kRight);
-        rightTrigger *= rightTrigger;
         double leftTrigger = xboxController.getTriggerAxis(Hand.kLeft);
-        leftTrigger *= leftTrigger;
 
         if (rightTrigger > 0.05)
             backHatchCam.rotate(rightTrigger);

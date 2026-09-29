@@ -1,35 +1,42 @@
 package frc.robot.commands.tele;
 
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Controls;
 import frc.robot.Subsystems;
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Articulator;
+import frc.robot.utils.hardware.CustomJoystick;
 import frc.robot.utils.hardware.CustomXboxController;
+import frc.robot.utils.hardware.RevColorSensorV2;
 
-public class TeleDrive extends Command
+public class TeleArticulate extends Command
 {
-    protected DriveTrain driveTrain;
+    protected Articulator articulator;
     protected CustomXboxController xboxController;
 
-    public TeleDrive()
+    public TeleArticulate()
     {
-        super(Subsystems.getInstance().driveTrain);
+        super(Subsystems.getInstance().articulator);
     }
 
     @Override
     protected void initialize()
     {
-        this.driveTrain = Subsystems.getInstance().driveTrain;
+        this.articulator = Subsystems.getInstance().articulator;
         this.xboxController = Controls.getInstance().mainController;
     }
 
     @Override
     protected void execute()
     {
-        double left = xboxController.getY(Hand.kLeft);
-        double right = xboxController.getY(Hand.kRight);
-        driveTrain.tankDrive(left, right);
+        // TODO implement
+        double speed = xboxController.getY(Hand.kLeft);
+
+        if (Math.abs(speed) > 0.1)
+            articulator.rotate(speed * .25);
+        else
+            articulator.stopMotor();
     }
 
     @Override
@@ -41,7 +48,7 @@ public class TeleDrive extends Command
     @Override
     protected void end()
     {
-        driveTrain.stopMotor();
+        articulator.stopMotor();
     }
 
     @Override
